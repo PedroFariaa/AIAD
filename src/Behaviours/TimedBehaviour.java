@@ -38,7 +38,7 @@ public class TimedBehaviour extends Behaviour{
 					counter = 0;
 					i = (i + 1) % states.size();
 
-					System.out.println("Changes status " + this.agent.getId());
+					//System.out.println("Changes status " + this.agent.getId());
 					this.agent.changeState(states.get(i));
 					break;
 				}

@@ -1,0 +1,16 @@
+<routes>
+  <route id="rota0" edges="1to2 2to3" />
+  <vehicle type="Car" route="rota0" id="carro1" depart="1" />
+ </routes>
+
+<routes>
+  <vType accel="2" decel="4" maxSpeed="20" id="Car" length="5" />
+  <vType accel="2" decel="4" maxSpeed="20" id="Taxi" sigma="1" length="5" color="1,0,0" />
+  <vType accel="1" decel="3" maxSpeed="16" id="Bus" length="10" />
+  <route id="rota0" edges="1to2 2to3"/>
+  <route id="rota1" edges="1to2"/>
+  <flow id="f1" type="Car"  route="rota0" begin="0"   end="900" period="30" />
+  <flow id="f2" type="Taxi" route="rota1" begin="0"   end="300" period="60" />
+  <flow id="f3" type="Bus"  route="rota1" begin="301" end="600" period="10" />
+  <flow id="f4" type="Bus"  route="rota0" begin="601" end="900" probability="0.1" color="0,1,0" />
+</routes>

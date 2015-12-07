@@ -103,8 +103,14 @@ public class SumoLane extends Lane {
 	 * @return number of stopped vehicles
 	 */
 	public int getNumVehiclesStopped(Double minVel) {
-		return 0;
-	
+		SumoVehicle[] list = vehiclesList();
+		int counter = 0;
+		for ( int i = 0; i < list.length; i++){
+			if ( list[i].getSpeed() <= minVel )
+				counter += 1;
+		}
+		
+		return counter;
 	}
 	
 	/**

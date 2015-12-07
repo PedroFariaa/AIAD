@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Random;
 
 import Behaviours.TimedBehaviour;
+import Controllers.EmergencyChecker;
+import Statistics.Statistics;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -25,13 +27,22 @@ public class AgentsManager extends Agent{
 	private Sumo sumo;
 	//ArrayList<TrafficLightAgentInfo> tfai;
 	private final int numDrivers = 500;
+	private Statistics statistics; 
 	
 	public AgentsManager(Sumo sumo, ContainerController mainController/*, ArrayList<TrafficLightAgentInfo> tfai*/) {
 		//gets all traffic lights in the sumo simulation
 		ArrayList<String> trafficLightIds = SumoTrafficLight.getIdList();
+		ArrayList<String> vehicles = SumoCom.getAllVehiclesIds();
+		
 		TrafficLightAgent agent;
+		statistics = new Statistics(sumo);
 		
 		//this.tfai = tfai;
+		
+		for ( String name : vehicles){
+			
+			addDrivers(mainController, Integer.parseInt(name));
+		}
 		
 		for (String id : trafficLightIds) {
 			SumoTrafficLight temp = new SumoTrafficLight(id);
@@ -56,6 +67,9 @@ public class AgentsManager extends Agent{
 				System.exit(1);
 			}
 		}
+		
+		
+		new Thread(statistics).start();
 	}
 
 	private ArrayList<String> organizeNeighbours(String id, ArrayList<String> neighbours) {
@@ -84,23 +98,15 @@ public class AgentsManager extends Agent{
  	}
 
 	
-	/*public void addDrivers( ContainerController mainController){
-
-		SumoCom.createAllRoutes();
-
-		DriverAgent.rand = new Random(423423);
+	public void addDrivers(ContainerController mainController, int id){
 
 		try {
-
-			for(int i=0; i<numDrivers; i++)
-				mainController.acceptNewAgent("DRIVER#"+i, new DriverAgent(i)).start();
-
+			mainController.acceptNewAgent("DRIVER#"+id, new DriverAgent(id)).start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
 
-
-	}*/
+	}
 	
 	public void setBehaviour() {
 		

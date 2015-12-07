@@ -264,20 +264,20 @@ public class TrafficLightCtrl implements Runnable{
 		int laneLenght = (int) Math.floor(sumoLane.getLength());
 		float ratio;
 
-		vehicles += sumoLane.getNumVehicles("nor");
-		vehicles += sumoLane.getNumVehicles("pub") * 3 ; //bus are bigger
-		vehicles += sumoLane.getNumVehicles("emer"); // take in consideration that emergency have priority????
+		vehicles += sumoLane.getNumVehicles("nor") * 1;
+		vehicles += sumoLane.getNumVehicles("pub") * 3; //bus are bigger
+		vehicles += sumoLane.getNumVehicles("emer") * 9; // take in consideration that emergency have priority????
 
 		ratio = (float) vehicles / (float) laneLenght;
 		Date date = new Date();
 		System.out.println(date + " - Lane " + lane + " has " + vehicles + " vehicles and lenght of " + laneLenght);
 
 		//the smaller the ratio the bigger the reward
-		if ( ratio < 0.01)
+		if ( ratio > 0.96)
 			return 100;
 		else
-			if ( ratio < 0.04)
-				return 0;
+			if ( ratio > 0.89)
+				return 10;
 			else
 				return -10;
 

@@ -17,8 +17,8 @@ public class Lane implements Comparable<Lane> {
 		throw new UnimplementedMethod();
 	}
 	
-	public int getNumVehiclesStopped(Double minVel) throws UnimplementedMethod {
-		throw new UnimplementedMethod();
+	public int getNumVehiclesStopped(Double minVel){
+		return this.getNumVehiclesStopped(0.2);
 	}
 	
 	public int getNumVehicles() throws UnimplementedMethod {

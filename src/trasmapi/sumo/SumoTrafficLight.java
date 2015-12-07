@@ -36,6 +36,7 @@ public class SumoTrafficLight extends TrafficLight {
 
 		cmd.setContent(cnt);
 
+	
 		//cmd.print("Command getAllVeh");
 
 		RequestMessage reqMsg = new RequestMessage();

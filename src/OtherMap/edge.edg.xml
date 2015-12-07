@@ -1,6 +1,6 @@
 <edges>
-  <edge from="p1" to="p2" id="1to2" />
-  <edge from="p2" to="p1" id="2to1" />
-  <edge from="p3" to="p1" id="3to1" />
+  <edge from="0/0" to="0/1" id="0/0to0/1" />
+  <edge from="0/1" to="0/0" id="0/1to0/0" />
+  <edge from="0/2" to="0/0" id="0/2to0/0" />
 </edges>
 

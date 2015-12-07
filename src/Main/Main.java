@@ -1,6 +1,9 @@
 package Main;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.attribute.AclEntry.Builder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +30,9 @@ public class Main {
 	private static ContainerController mainContainer;
 	
 	public static void main(String[] args) throws UnimplementedMethod, InterruptedException, IOException, TimeoutException {	
-		ArrayList<TrafficLightAgentInfo> tfai = TFAgentInfoParser.parseTFAgentInfo("src\\OtherMap\\trafficLightInfo.xml");
+		//ArrayList<TrafficLightAgentInfo> tfai = TFAgentInfoParser.parseTFAgentInfo("src\\OtherMap\\trafficLightInfo.xml");
 		
-		//Init JADE platform w/ or w/out GUI
+		//Init JADE platform w/ or w/out GUI		
 		if(JADE_GUI){
 			List<String> params = new ArrayList<String>();
 			params.add("-gui");
@@ -48,7 +51,7 @@ public class Main {
 		//Create SUMO
 		Sumo sumo = new Sumo("guisim");
 		List<String> params = new ArrayList<String>();
-		params.add("-c=src\\OtherMap\\map.sumo.cfg");
+		params.add("-c=src\\manhattan3\\file.sumocfg");
 		sumo.addParameters(params);
 		sumo.addConnections("localhost", 8820);
 
@@ -62,7 +65,7 @@ public class Main {
 
 		
 		//
-		AgentsManager manager = new AgentsManager(sumo,mainContainer, tfai);
+		AgentsManager manager = new AgentsManager(sumo,mainContainer/*, tfai*/);
 		manager.startupAgents(mainContainer);
 		
 		api.start();
@@ -74,9 +77,10 @@ public class Main {
 			if(!api.simulationStep(0))
 				break;
 		}
+		
+		
+
 	}	
-		
-		
 		
 }
 

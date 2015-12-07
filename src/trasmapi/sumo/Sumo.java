@@ -6,6 +6,7 @@ import java.util.List;
 
 import trasmapi.genAPI.Simulator;
 import trasmapi.genAPI.exceptions.TimeoutException;
+import trasmapi.genAPI.exceptions.UnimplementedMethod;
 
 public class Sumo extends Simulator {
 	
@@ -44,4 +45,20 @@ public class Sumo extends Simulator {
 	public void start(){
 		comm.start(0);
 	}
+	
+    /*public synchronized int getCurrentTicks() {
+        return comm.getTicks();
+    }*/
+
+	/***
+	 * 
+	 * @return
+	 */
+    public int getCurrentSimStep() {
+        return comm.getCurrentSimStep();
+    }
+/*
+    public void subscribeTicksInt() throws UnimplementedMethod {
+        comm.subscribeTicks();
+    }*/
 }

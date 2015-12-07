@@ -24,8 +24,9 @@ public class DriverAgent extends Agent{
 
 
 	public DriverAgent(int i) {
-		// TODO Auto-generated constructor stub
 		super();
+
+
 		this.id= i;
 
 		origin = SumoCom.edgesIDs.get(rand.nextInt(SumoCom.edgesIDs.size()));
@@ -35,8 +36,6 @@ public class DriverAgent extends Agent{
 		}while(origin.equals(destination));
 
 
-		System.out.println("SIZE");
-		//System.out.println(SumoCom.vehicleTypesIDs.);
 		String vehicleType = SumoCom.vehicleTypesIDs.get(rand.nextInt(SumoCom.vehicleTypesIDs.size()));
 		String routeId = SumoCom.getRouteId(origin, null);
 		int departureTime = 0;
@@ -52,6 +51,7 @@ public class DriverAgent extends Agent{
 		SumoCom.addVehicleToSimulation((SumoVehicle)vehicle);
 
 		vehicle.changeTarget(destination);
+
 	}
 
 

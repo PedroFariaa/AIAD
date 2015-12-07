@@ -32,4 +32,9 @@ public class Lane implements Comparable<Lane> {
 	public Vehicle[] vehiclesList() throws UnimplementedMethod {
 		throw new UnimplementedMethod();
 	}
+
+	public int getNumVehicles(String type) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

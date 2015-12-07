@@ -169,4 +169,24 @@ public class SumoLane extends Lane {
             e.printStackTrace();
         }
 	}
+	
+	
+	 @Override
+	    /**
+	     * @param type may have the value nor / eme / bus
+	     */
+	    public int getNumVehicles(String type) {
+	        int sum = 0;
+	        SumoVehicle[] vehicles = vehiclesList();
+	        for (int i = 0; i < vehicles.length; i++) {
+	            try {
+	                if (vehicles[i].getTypeId().equals(type)) {
+	                    // vehicles[i].focus();
+	                    sum++;
+	                }
+	            }catch (IndexOutOfBoundsException e) {
+	            }
+	        }
+	        return sum;
+	    }
 }

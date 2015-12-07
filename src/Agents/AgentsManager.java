@@ -1,26 +1,37 @@
 package Agents;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Random;
 
 import Behaviours.TimedBehaviour;
 import jade.core.AID;
+import jade.core.Agent;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
 import trasmapi.sumo.Sumo;
+import trasmapi.sumo.SumoCom;
 import trasmapi.sumo.SumoTrafficLight;
+import trasmapi.sumo.SumoVehicle;
 
-public class AgentsManager {
+public class AgentsManager extends Agent{
 	ArrayList<TrafficLightAgent> agents = new ArrayList<TrafficLightAgent>();
 	private Sumo sumo;
-	ArrayList<TrafficLightAgentInfo> tfai;
+	//ArrayList<TrafficLightAgentInfo> tfai;
+	private final int numDrivers = 500;
 	
-	public AgentsManager(Sumo sumo, ContainerController mainController, ArrayList<TrafficLightAgentInfo> tfai) {
+	public AgentsManager(Sumo sumo, ContainerController mainController/*, ArrayList<TrafficLightAgentInfo> tfai*/) {
 		//gets all traffic lights in the sumo simulation
 		ArrayList<String> trafficLightIds = SumoTrafficLight.getIdList();
 		TrafficLightAgent agent;
 		
-		this.tfai = tfai;
+		//this.tfai = tfai;
 		
 		for (String id : trafficLightIds) {
 			SumoTrafficLight temp = new SumoTrafficLight(id);
@@ -33,7 +44,6 @@ public class AgentsManager {
 				neighbours.add(getLaneSrcFromId(l));
 			}
 			
-			// TODO
 			neighbours = organizeNeighbours(id, neighbours);
 			
 			try {
@@ -41,7 +51,6 @@ public class AgentsManager {
 				agents.add(agent);
 				AgentController t = mainController.acceptNewAgent("TrafficLight-" + id, agent);
 				mainController.getAgent(agent.getLocalName(),AID.ISLOCALNAME);
-				System.out.println(t.toString());
 			}catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -50,13 +59,52 @@ public class AgentsManager {
 	}
 
 	private ArrayList<String> organizeNeighbours(String id, ArrayList<String> neighbours) {
-		return neighbours;
-	}
+		ArrayList<String> ordered = new ArrayList<String>();
+		String[] splitId = id.split("/");
+		int column = Integer.parseInt(splitId[0]);
+		int line = Integer.parseInt(splitId[1]);
+		String uppNei = column + "/" + Integer.toString(line + 1);
+		String rightNei = Integer.toString(column + 1) + "/" + line;
+		String downNei = column + "/" + Integer.toString(line - 1);
+		String leftNei = Integer.toString(column-1) + "/" + line;
+		
+		if ( neighbours.contains(uppNei))
+			ordered.add(uppNei);
+		
+		if ( neighbours.contains(rightNei))
+				ordered.add(rightNei);
+		
+		if ( neighbours.contains(downNei))
+			ordered.add(downNei);
+		
+		if ( neighbours.contains(leftNei))
+			ordered.add(leftNei);
+		
+		return ordered;
+ 	}
 
+	
+	/*public void addDrivers( ContainerController mainController){
+
+		SumoCom.createAllRoutes();
+
+		DriverAgent.rand = new Random(423423);
+
+		try {
+
+			for(int i=0; i<numDrivers; i++)
+				mainController.acceptNewAgent("DRIVER#"+i, new DriverAgent(i)).start();
+
+		} catch (StaleProxyException e) {
+			e.printStackTrace();
+		}
+
+
+	}*/
 	
 	public void setBehaviour() {
 		
-		ArrayList<Integer> timeStates = new ArrayList<Integer>();
+		/*ArrayList<Integer> timeStates = new ArrayList<Integer>();
 		ArrayList<String> states = new ArrayList<String>();
 		TimedBehaviour tb;
 		for ( TrafficLightAgent tl : agents){
@@ -71,16 +119,16 @@ public class AgentsManager {
 				
 			}
 			
-		}
+		}*/
 		
 	}
 	
 	public void startupAgents(ContainerController mainController) {
 		try {
 			for ( TrafficLightAgent ag : agents) {
-				
+				Date date = new Date();
 				String temp = ag.getLocalName().split("-")[1];
-				System.out.println("HELLO " + temp);
+				System.out.println(date + " - New agent " + temp);
 				mainController.getAgent(ag.getLocalName(),AID.ISLOCALNAME).start();
 			}
 		}catch(Exception e) {
@@ -94,4 +142,43 @@ public class AgentsManager {
 	private static String getLaneSrcFromId(String l) {
 		 return l.split("to")[0];
 	}
+	
+	/**
+	 * 
+	 */
+	protected void setup(){
+	    DFAgentDescription ad = new DFAgentDescription();
+        ad.setName(getAID()); //agentID
+        Date date = new Date();
+        System.out.println(date + " - AID: " + ad.getName());
+
+        ServiceDescription sd = new ServiceDescription();
+        sd.setName(getName()); //nome do agente
+        date = new Date();
+        System.out.println(date + " - Nome: " + sd.getName());
+
+        sd.setType("Manager");
+        date = new Date();
+        System.out.println(date + " - Tipo: " + sd.getType() + "\n\n\n");
+
+        ad.addServices(sd);
+
+        try {
+            DFService.register(this, ad);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+
+        super.setup();
+	}
+	
+	  @Override
+	    protected void takeDown() {
+	        try {
+	            DFService.deregister(this);
+	        } catch (FIPAException e) {
+	            e.printStackTrace();
+	        }
+	        super.takeDown();
+	    }
 }

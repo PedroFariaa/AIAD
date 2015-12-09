@@ -48,7 +48,7 @@ public class IntersectionBehaviour extends Behaviour{
 
 		for ( String s : controlledLanes){
 			SumoLane sl = new SumoLane(s);	
-			NumCarrosParados.add(new Integer(sl.getNumVehicles()));
+			NumCarrosParados.add(new Integer( sl.getNumVehiclesStopped(0.2)));
 		}
 
 		double maxV = Math.max(NumCarrosParados.get(0), NumCarrosParados.get(2));

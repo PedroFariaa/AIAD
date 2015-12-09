@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import Behaviours.IntersectionBehaviour;
 import Behaviours.RewardLearningBehaviour;
+import Behaviours.TimedBehaviour;
 import Controllers.TrafficLightCtrl;
 import Learning.QLearning;
 import jade.core.AID;
@@ -25,6 +27,7 @@ public class TrafficLightAgent extends Agent {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	TrafficLightAgentInfo tfai;
 	private String identifier;
 	private Sumo sumo;
 	private ArrayList<String> neighbours;
@@ -35,20 +38,24 @@ public class TrafficLightAgent extends Agent {
 	private int actions;
 	QLearning learn;
 	TLState st;
+	String type;
 
-	public TrafficLightAgent(Sumo sumo, String id, ArrayList<String> neighbour) {
+	public TrafficLightAgent(Sumo sumo, String id, ArrayList<String> neighbour, String type) {
 		super();
 		this.identifier = id;
 		this.sumo = sumo;
 		this.neighbours = neighbour;
 		this.stf = new SumoTrafficLight(identifier);
 		this.intersectionsNum = neighbour.size();
+		this.type = type;
 		states = (int) Math.pow(TLState.getStatesPerLight(), intersectionsNum);
 		actions = (int) Math.pow(TLState.getActionPerLight(), intersectionsNum);
 
-		learn = new QLearning(identifier, states, actions);
+		if ( type.equals("LEARNING"))
+			learn = new QLearning(identifier, states, actions);
 		st = new TLState(identifier, intersectionsNum, states);
-		controller = new TrafficLightCtrl(this, sumo, identifier, neighbours, st.getGreenTime());
+		if ( type.equals("LEARNING"))
+			controller = new TrafficLightCtrl(this, sumo, identifier, neighbours, st.getGreenTime());
 
 		// cleans names of neighbours and removes if is not a traffic light
 		ArrayList<String> temp = SumoTrafficLight.getIdList();
@@ -62,11 +69,39 @@ public class TrafficLightAgent extends Agent {
 				i--;
 			}
 		}
-		
+
 		Date date = new Date();
 		System.out.println(date + " - New TrafficLightAgent named " + this.identifier);
 	}
 
+	
+	public TrafficLightAgent(Sumo sumo, String id, ArrayList<String> neighbour,TrafficLightAgentInfo tfai ) {
+		super();
+		this.identifier = id;
+		this.sumo = sumo;
+		this.neighbours = neighbour;
+		this.stf = new SumoTrafficLight(identifier);
+		this.intersectionsNum = neighbour.size();
+		this.tfai = tfai;
+
+
+		// cleans names of neighbours and removes if is not a traffic light
+		ArrayList<String> temp = SumoTrafficLight.getIdList();
+
+		for (int i = 0; i < this.neighbours.size(); i++) {
+			if (Arrays.asList(temp.toArray()).contains((this.neighbours).get(i))) {
+				this.neighbours.set(i, "TrafficLght-" + this.neighbours.get(i));
+			} else {
+				// if neighbour is not considered a traffic light
+				this.neighbours.remove(i);
+				i--;
+			}
+		}
+
+		Date date = new Date();
+		System.out.println(date + " - New TrafficLightAgent named " + this.identifier);
+	}
+	
 	public TLState getTLState() {
 		return st;
 	}
@@ -160,8 +195,20 @@ public class TrafficLightAgent extends Agent {
 
 		try {
 			DFService.register(this, dfd);
-			RewardLearningBehaviour be = new RewardLearningBehaviour(this);
-			this.addBehaviour(be);
+			if ( type.equals("LEARNING")) {
+				RewardLearningBehaviour be = new RewardLearningBehaviour(this);
+				this.addBehaviour(be);
+			}
+			else
+				if (type.equals("FIXED")){
+					TimedBehaviour be = new TimedBehaviour(this, tfai.getTimeStates(), tfai.getStates());
+					this.addBehaviour(be);
+				}
+				else
+					if ( type.equals("INTERSECTION")){
+						IntersectionBehaviour be = new IntersectionBehaviour(this, tfai.getTimeStates(), tfai.getStates());
+						this.addBehaviour(be);
+					}
 			Date date = new Date();
 			System.out.println(date + " - " + identifier + " : added Reward and Learning Behaviour");
 		} catch (FIPAException e) {

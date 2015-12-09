@@ -25,14 +25,16 @@ import trasmapi.sumo.SumoVehicle;
 public class AgentsManager extends Agent{
 	ArrayList<TrafficLightAgent> agents = new ArrayList<TrafficLightAgent>();
 	private Sumo sumo;
-	//ArrayList<TrafficLightAgentInfo> tfai;
+	ArrayList<TrafficLightAgentInfo> tfai;
 	private final int numDrivers = 500;
-	private Statistics statistics; 
+	private Statistics statistics;
+	private String type;
 	
-	public AgentsManager(Sumo sumo, ContainerController mainController/*, ArrayList<TrafficLightAgentInfo> tfai*/) {
+	public AgentsManager(Sumo sumo, ContainerController mainController, String type/*, ArrayList<TrafficLightAgentInfo> tfai*/) {
 		//gets all traffic lights in the sumo simulation
 		ArrayList<String> trafficLightIds = SumoTrafficLight.getIdList();
 		ArrayList<String> vehicles = SumoCom.getAllVehiclesIds();
+		this.type = type;
 		
 		TrafficLightAgent agent;
 		statistics = new Statistics(sumo);
@@ -58,7 +60,7 @@ public class AgentsManager extends Agent{
 			neighbours = organizeNeighbours(id, neighbours);
 			
 			try {
-				agent = new TrafficLightAgent(sumo, id, neighbours);
+				agent = new TrafficLightAgent(sumo, id, neighbours, type);
 				agents.add(agent);
 				AgentController t = mainController.acceptNewAgent("TrafficLight-" + id, agent);
 				mainController.getAgent(agent.getLocalName(),AID.ISLOCALNAME);
@@ -72,6 +74,62 @@ public class AgentsManager extends Agent{
 		new Thread(statistics).start();
 	}
 
+	
+	public AgentsManager(Sumo sumo, ContainerController mainController, ArrayList<TrafficLightAgentInfo> tfai) {
+		//gets all traffic lights in the sumo simulation
+		ArrayList<String> trafficLightIds = SumoTrafficLight.getIdList();
+		ArrayList<String> vehicles = SumoCom.getAllVehiclesIds();
+		
+		TrafficLightAgent agent;
+		statistics = new Statistics(sumo);
+		
+		this.tfai = tfai;
+		
+		
+		for ( String name : vehicles){
+			
+			addDrivers(mainController, Integer.parseInt(name));
+		}
+		
+		for (String id : trafficLightIds) {
+			SumoTrafficLight temp = new SumoTrafficLight(id);
+			
+			HashSet<String> lanes;
+			lanes = new HashSet<String>(temp.getControlledLanes());
+			
+			ArrayList<String> neighbours = new ArrayList<String>();
+			for (String l : lanes) {
+				neighbours.add(getLaneSrcFromId(l));
+			}
+			
+			neighbours = organizeNeighbours(id, neighbours);
+			
+			TrafficLightAgentInfo tempTfai = null;
+			for (int j = 0; j < tfai.size(); j++){
+				if ( tfai.get(j).getIdentifier().equals(id)){
+					
+					tempTfai = tfai.get(j);
+				}
+					
+			}
+			
+			try {
+				agent = new TrafficLightAgent(sumo, id, neighbours,tempTfai);
+				agents.add(agent);
+				AgentController t = mainController.acceptNewAgent("TrafficLight-" + id, agent);
+				mainController.getAgent(agent.getLocalName(),AID.ISLOCALNAME);
+			}catch(Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+		
+		
+		new Thread(statistics).start();
+	}
+
+	
+	
 	private ArrayList<String> organizeNeighbours(String id, ArrayList<String> neighbours) {
 		ArrayList<String> ordered = new ArrayList<String>();
 		String[] splitId = id.split("/");

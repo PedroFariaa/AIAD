@@ -29,8 +29,25 @@ public class Main {
 	private static ProfileImpl profile;
 	private static ContainerController mainContainer;
 	
+	//args[0] == 1 -> fixed behaviour
+	//args[0] == 2 -> intersection behaviour
+	//args[0] == 3 -> learning behaviour
 	public static void main(String[] args) throws UnimplementedMethod, InterruptedException, IOException, TimeoutException {	
-		//ArrayList<TrafficLightAgentInfo> tfai = TFAgentInfoParser.parseTFAgentInfo("src\\OtherMap\\trafficLightInfo.xml");
+		ArrayList<TrafficLightAgentInfo> tfai = null;
+		String type = null;
+		if ( args[0].equals("1")){
+			tfai = TFAgentInfoParser.parseTFAgentInfo("src\\OtherMap\\trafficLightInfo.xml");
+			type = "FIXED";
+		}
+		else
+			if ( args[0].equals("2")){
+				tfai = TFAgentInfoParser.parseTFAgentInfo("src\\OtherMap\\trafficLightInfo.xml");
+				type = "INTERSECTION";
+			}
+			else
+				if ( args[0].equals("3"))
+					type = "LEARNING";
+		
 		
 		//Init JADE platform w/ or w/out GUI		
 		if(JADE_GUI){
@@ -65,7 +82,13 @@ public class Main {
 
 		
 		//
-		AgentsManager manager = new AgentsManager(sumo,mainContainer/*, tfai*/);
+		AgentsManager manager = null;
+		if  (type.equals("FIXED") || type.equals("INTERSECTION"))
+				manager = new AgentsManager(sumo,mainContainer, tfai);
+		else
+			manager  = new AgentsManager(sumo, mainContainer, type);
+		
+		
 		manager.startupAgents(mainContainer);
 		
 		api.start();

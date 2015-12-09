@@ -64,6 +64,12 @@ public class IntersectionBehaviour extends Behaviour{
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				this.agent.changeState("rrrr");
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				
 				this.agent.changeState("grgr");
 			}
@@ -72,6 +78,12 @@ public class IntersectionBehaviour extends Behaviour{
 				{
 					try {
 						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					this.agent.changeState("rrrr");
+					try {
+						Thread.sleep(20);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -96,6 +108,12 @@ public class IntersectionBehaviour extends Behaviour{
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+					this.agent.changeState("rrrr");
+					try {
+						Thread.sleep(20);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					
 					this.agent.changeState("rgrg");
 				}
@@ -104,6 +122,12 @@ public class IntersectionBehaviour extends Behaviour{
 					{
 						try {
 							Thread.sleep(50);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						this.agent.changeState("rrrr");
+						try {
+							Thread.sleep(20);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}

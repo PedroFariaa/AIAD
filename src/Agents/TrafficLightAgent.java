@@ -7,6 +7,7 @@ import java.util.Date;
 import Behaviours.IntersectionBehaviour;
 import Behaviours.RewardLearningBehaviour;
 import Behaviours.TimedBehaviour;
+import Behaviours.SyncronizedBehaviour;
 import Controllers.TrafficLightCtrl;
 import Learning.QLearning;
 import jade.core.AID;
@@ -180,6 +181,21 @@ public class TrafficLightAgent extends Agent {
 			send(request);
 		}
 	}
+	
+	/**
+	 * Sends messages to neighbours sending trafficLight status
+	 */
+	public void SyncInitialization(String contentToSend) {
+
+		for (int i = 0; i < neighbours.size(); i++) {
+			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+			msg.addReplyTo(new AID(neighbours.get(i), AID.ISLOCALNAME));
+			msg.setContent(contentToSend);
+			Date date = new Date();
+			System.out.println(date + " - " + identifier + " : sync start message sent to: " + neighbours.get(i));
+			send(msg);
+		}
+	}
 
 	@Override
 	protected void setup() {
@@ -207,6 +223,10 @@ public class TrafficLightAgent extends Agent {
 				else
 					if ( type.equals("INTERSECTION")){
 						IntersectionBehaviour be = new IntersectionBehaviour(this, tfai.getTimeStates(), tfai.getStates());
+						this.addBehaviour(be);
+					}
+					else if( type.equals("SYNCRONIZED") ){
+						SyncronizedBehaviour be = new SyncronizedBehaviour();
 						this.addBehaviour(be);
 					}
 			Date date = new Date();

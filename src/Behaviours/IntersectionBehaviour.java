@@ -9,7 +9,6 @@ import trasmapi.sumo.SumoLane;
 public class IntersectionBehaviour extends Behaviour{
 
 	/**
-	 * 
 	 *  rgrg
 	 *  grgr
 	 *  rrrr

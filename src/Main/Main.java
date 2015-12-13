@@ -32,6 +32,8 @@ public class Main {
 	//args[0] == 1 -> fixed behaviour
 	//args[0] == 2 -> intersection behaviour
 	//args[0] == 3 -> learning behaviour
+	//args[0] == 4 -> syncronized behaviour
+	
 	public static void main(String[] args) throws UnimplementedMethod, InterruptedException, IOException, TimeoutException {	
 		ArrayList<TrafficLightAgentInfo> tfai = null;
 		String type = null;
@@ -47,6 +49,14 @@ public class Main {
 			else
 				if ( args[0].equals("3"))
 					type = "LEARNING";
+				else
+					if ( args[0].equals("4"))
+						type = "SYNCRONIZED";
+					else
+					{
+						System.out.println("Error in arg");
+						return;
+					}
 		
 		
 		//Init JADE platform w/ or w/out GUI		
@@ -68,7 +78,7 @@ public class Main {
 		//Create SUMO
 		Sumo sumo = new Sumo("guisim");
 		List<String> params = new ArrayList<String>();
-		params.add("-c=src\\manhattan3\\file.sumocfg");
+		params.add("-c=src\\mapaLearning\\file.sumocfg");
 		sumo.addParameters(params);
 		sumo.addConnections("localhost", 8820);
 

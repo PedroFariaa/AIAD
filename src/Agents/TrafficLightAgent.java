@@ -136,13 +136,13 @@ public class TrafficLightAgent extends Agent {
 	}
 
 	public int getState() {
-		/*
-		 * String s = stf.getState(); if ( s.equals("r")) return
-		 * Constants.TLPHASE_RED; else if ( s.equals("g")) return
-		 * Constants.TLPHASE_GREEN; else if ( s.equals("y")) return
-		 * Constants.TLPHASE_YELLOW; else return -1;
-		 */
-		return -1;
+		
+		  String s = stf.getState(); if ( s.equals("r")) return
+		  Constants.TLPHASE_RED; else if ( s.equals("g")) return
+		  Constants.TLPHASE_GREEN; else if ( s.equals("y")) return
+		  Constants.TLPHASE_YELLOW; else return -1;
+		 
+		//return -1;
 	}
 
 	public ArrayList<String> getControlledLanes() {

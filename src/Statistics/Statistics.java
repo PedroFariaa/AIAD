@@ -30,15 +30,15 @@ public class Statistics implements Runnable{
 		Date ra = new Date();
 		String name = "statistics_"+ra.getTime()+".txt";
 		FileWriter file;
-		
+
 		try {
-			
+
 			while(run){		
-				
+
 				file = new FileWriter(name, true);
 				vehicles = SumoCom.getAllVehiclesIds();
 				time = 0.0;
-				
+
 				for ( int i = 0; i < vehicles.size(); i++){
 					SumoVehicle ve = new SumoVehicle(vehicles.get(i));
 					tempTime = ve.getWaitingTime();
@@ -51,14 +51,14 @@ public class Statistics implements Runnable{
 					average = time;
 				else
 					average = time / vehicles.size();
-				
+
 				Date now = new Date();
 
 				file.write("-----" + now + " - Average Waiting time " + average);
 				file.write("\r\n");
 				System.err.println(now + " - Average Waiting time " + average);
 				Thread.sleep(100);
-	
+
 				file.close();
 			}
 
